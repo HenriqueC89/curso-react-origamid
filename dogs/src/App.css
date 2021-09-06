@@ -93,3 +93,18 @@ a {
     transform: initial;
   }
 }
+
+.App {
+  display: flex;
+  flex-direction: column;
+  /* total + tamanho footer */
+  min-height: calc(100vh + 10rem);
+}
+
+.AppBody {
+  flex: 1;
+}
+
+.VictoryContainer {
+  height: initial !important;
+}
