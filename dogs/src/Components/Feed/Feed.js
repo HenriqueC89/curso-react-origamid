@@ -2,21 +2,31 @@ import React from 'react';
 import FeedModal from './FeedModal';
 import FeedPhotos from './FeedPhotos';
 import PropTypes from 'prop-types';
+import { useSelector, useDispatch } from 'react-redux';
+import { loadNewPhotos, resetFeedState } from '../../store/feed';
+import Loading from '../Helper/Loading';
+import Error from '../Helper/Error';
 
 const Feed = ({ user }) => {
-  const [modalPhoto, setModalPhoto] = React.useState(null);
-  const [pages, setPages] = React.useState([1]);
-  const [infinite, setInfinite] = React.useState(true);
+  const { hasNewPhotos, loading, list, error } = useSelector(
+    (state) => state.feed
+  );
+  const dispatch = useDispatch();
+
+  React.useEffect(() => {
+    dispatch(resetFeedState());
+    dispatch(loadNewPhotos({ user, total: 6 }));
+  }, [dispatch, user]);
 
   React.useEffect(() => {
     let wait = false;
 
     function infiniteScroll() {
-      if (infinite) {
+      if (hasNewPhotos) {
         const scroll = window.scrollY;
         const height = document.body.offsetHeight - window.innerHeight;
         if (scroll > height * 0.75 && !wait) {
-          setPages((pages) => [...pages, pages.length + 1]);
+          dispatch(loadNewPhotos({ user, total: 6 }));
           wait = true;
           setTimeout(() => {
             wait = false;
@@ -30,23 +40,16 @@ const Feed = ({ user }) => {
       window.removeEventListener('wheel', infiniteScroll);
       window.removeEventListener('scroll', infiniteScroll);
     };
-  }, [infinite]);
+  }, [hasNewPhotos, dispatch, user]);
 
   return (
     <div>
-      {modalPhoto && (
-        <FeedModal photo={modalPhoto} setModalPhoto={setModalPhoto} />
-      )}
-      {pages.map((page) => (
-        <FeedPhotos
-          setModalPhoto={setModalPhoto}
-          user={user}
-          page={page}
-          key={page}
-          setInfinite={setInfinite}
-        />
-      ))}
-      {!infinite && !user && (
+      <FeedModal />
+      {list.length > 0 && <FeedPhotos />}
+      {loading && <Loading />}
+      {error && <Error error={error} />}
+
+      {!hasNewPhotos && !user && (
         <p
           style={{
             textAlign: 'center',

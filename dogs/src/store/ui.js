@@ -1,0 +1,20 @@
+import createSlice from './helper/createAsyncSlice';
+
+const slice = createSlice({
+  name: 'ui',
+  initialState: {
+    modal: false,
+  },
+  reducers: {
+    openModal(state) {
+      state.modal = true;
+    },
+    closeModal(state) {
+      state.modal = false;
+    },
+  },
+});
+
+export const { openModal, closeModal } = slice.actions;
+
+export default slice.reducer;

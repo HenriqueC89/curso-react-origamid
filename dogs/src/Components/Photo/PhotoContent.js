@@ -1,14 +1,14 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { UserContext } from '../../UserContext';
 import Image from '../Helper/Image';
 import PhotoComments from './PhotoComments';
 import styles from './PhotoContent.module.css';
 import PhotoDelete from './PhotoDelete';
+import { useSelector } from 'react-redux';
 
-const PhotoContent = ({ data, single }) => {
-  const user = React.useContext(UserContext);
-  const { photo, comments } = data;
+const PhotoContent = ({ single }) => {
+  const { user } = useSelector((state) => state);
+  const { photo, comments } = useSelector((state) => state.photo.data);
 
   return (
     <div className={`${styles.photo} ${single ? styles.single : ''}`}>
